@@ -1,23 +1,22 @@
 data "aws_ami" "kiran" {
-    owners           = ["973714476881"]
-    most_recent      = true
-    
-    filter {
-        name   = "name"
-        values = ["Redhat-9-DevOps-Practice"]
-    }
+  owners      = ["973714476881"]
+  most_recent = true
 
-    filter {
-        name   = "root-device-type"
-        values = ["ebs"]
-    }
+  filter {
+    name   = "name"
+    values = ["*Redhat-9-DevOps-Practice*"]
+  }
 
-    filter {
-        name   = "virtualization-type"
-        values = ["hvm"]
-    }
+  filter {
+    name   = "root-device-type"
+    values = ["ebs"]
+  }
+
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
 }
-
 data "aws_ssm_parameter" "sg_id" {
   name = "/${var.project_name}/${var.environment}/${var.component}_sg_id"
 }
