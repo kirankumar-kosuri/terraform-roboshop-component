@@ -1,20 +1,21 @@
 variable "project_name" {
-  type = string
-  default = "roboshop"
+  type        = string
+  default     = "roboshop"
 }
 
 variable "environment" {
-  type = string
-  default = "roboshop"
+  type        = string
+  default     = "dev"
 }
 
 variable "component" {
-    type = string
+
 }
 
 variable "rule_priority" {
+
 }
 
 variable "domain_name" {
-  default = "engg.site"
+    default = "engg.site"
 }
