@@ -1,11 +1,7 @@
 data "aws_ami" "main" {
-  owners      = ["973714476881"]
-  most_recent = true
-
-  filter {
-    name   = "name"
-    values = ["Redhat-9-DevOps-Practice"]
-  }
+  most_recent      = true
+  name_regex       = "Redhat-9-DevOps-Practice"
+  owners           = ["973714476881"]
 
   filter {
     name   = "root-device-type"
