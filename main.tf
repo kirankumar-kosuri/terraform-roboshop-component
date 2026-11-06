@@ -1,7 +1,7 @@
 # Create EC2 instance
 resource "aws_instance" "main" {
     ami = local.ami_id
-    instance_type = "t2.micro"
+    instance_type = "t3.micro"
     vpc_security_group_ids = [local.sg_id]
     subnet_id = local.private_subnet_id
     
@@ -12,6 +12,7 @@ resource "aws_instance" "main" {
         }
     )
 }
+
 
 resource "terraform_data" "main" {
   triggers_replace = [
@@ -24,6 +25,7 @@ resource "terraform_data" "main" {
     password = "DevOps321"
     host     = aws_instance.main.private_ip
   }
+
   provisioner "file" {
     source = "bootstrap.sh"
     destination = "/tmp/bootstrap.sh"
@@ -39,7 +41,7 @@ resource "terraform_data" "main" {
 
 resource "aws_ec2_instance_state" "main" {
   instance_id = aws_instance.main.id
-  state = "stopped"
+  state       = "stopped"
   depends_on = [terraform_data.main]
 }
 
@@ -47,21 +49,20 @@ resource "aws_ami_from_instance" "main" {
   name               = "${local.common_name_suffix}-${var.component}-ami"
   source_instance_id = aws_instance.main.id
   depends_on = [aws_ec2_instance_state.main]
-
   tags = merge (
         local.common_tags,
         {
-            Name = "${local.common_name_suffix}-${var.component}-ami" # roboshop-dev-ami
+            Name = "${local.common_name_suffix}-${var.component}-ami" # roboshop-dev-mongodb
         }
-    )
+  )
 }
 
 resource "aws_lb_target_group" "main" {
   name     = "${local.common_name_suffix}-${var.component}"
-  port     = local.tg_port
+  port     = local.tg_port # if frontend port is 80, otherwise port is 8080
   protocol = "HTTP"
   vpc_id   = local.vpc_id
-  deregistration_delay = 60 # waiting period for deleting the instance 
+  deregistration_delay = 60 # waiting period before deleting the instance
 
   health_check {
     healthy_threshold = 2
@@ -72,7 +73,6 @@ resource "aws_lb_target_group" "main" {
     protocol = "HTTP"
     timeout = 2
     unhealthy_threshold = 2
-
   }
 }
 
@@ -162,6 +162,7 @@ resource "aws_autoscaling_group" "main" {
   timeouts {
     delete = "15m"
   }
+
 }
 
 resource "aws_autoscaling_policy" "main" {
@@ -194,7 +195,7 @@ resource "aws_lb_listener_rule" "main" {
   }
 }
 
-resource "terraform_data" "main" {
+resource "terraform_data" "main_local" {
   triggers_replace = [
     aws_instance.main.id
   ]
