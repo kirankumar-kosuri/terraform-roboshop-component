@@ -1,5 +1,5 @@
 data "aws_ami" "kiran" {
-    owners           = ["973714476881"]
+    owners           = ["648967983842"]
     most_recent      = true
     
     filter {

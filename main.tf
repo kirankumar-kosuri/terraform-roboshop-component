@@ -1,5 +1,5 @@
 # Create EC2 instance
-resource "aws_instance" "kiran" {
+resource "aws_instance" "main" {
     ami = local.ami_id
     instance_type = "t3.micro"
     vpc_security_group_ids = [local.sg_id]
